@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import Image from "next/image";
 import { z } from "zod";
 import { useState } from "react";
+import axios from "axios";
 import {
   Form,
   FormControl,
@@ -34,20 +35,6 @@ const formSchema = z.object({
   file: z.array(z.any()).optional(),
   prompt: z.string().optional(),
 });
-
-// convert image to base64 to send to api
-const convertToBase64 = (file: any) => {
-  return new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-    fileReader.onload = () => {
-      resolve(fileReader.result);
-    };
-    fileReader.onerror = (error) => {
-      reject(error);
-    };
-  });
-};
 
 const gradeLevels = [
   { id: "1st", label: "1st" },
@@ -65,7 +52,6 @@ const gradeLevels = [
   { id: "Undergraduate", label: "Undergraduate" },
 ];
 
-async function onSubmit(values: z.infer<typeof formSchema>) {}
 export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,7 +63,49 @@ export default function Home() {
   });
 
   const [position, setPosition] = useState("bottom");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // convert image to base64 to send to api
+  const convertToBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+
+    let image;
+    if (values.file && values.file?.length > 0) {
+      image = await convertToBase64(values.file[0]);
+    }
+
+    // submit to our api
+    try {
+      const res = await axios.post("/api/cloudFlareWorkerAI/simplify", {
+        desiredGradeLevel: values.desiredGradeLevel,
+        prompt: values.prompt,
+        base64Image: image,
+      });
+      console.log(res.data);
+    } catch (error: any) {
+      console.log("Submission Failed", error.response);
+    } finally {
+      setIsLoading(false);
+    }
+    console.log({
+      desiredGradeLevel: values.desiredGradeLevel,
+      prompt: values.prompt,
+      base64Image: image,
+    });
+  }
   // const [files, setFiles] = useState();
   return (
     <Form {...form}>
@@ -131,7 +159,6 @@ export default function Home() {
                 </div>
               </div> */}
             </div>
-
             {/*  */}
             <div>
               <FormField
@@ -174,7 +201,7 @@ export default function Home() {
                 )}
               />
             </div>
-
+            /**
             <div className="pt-4">
               <FormField
                 control={form.control}
@@ -217,6 +244,7 @@ export default function Home() {
                 )}
               />
             </div>
+            {isLoading ? "hi" : ""}
             <Button className="w-full bg-gradient-to-r from-cyan-400 to-fuchsia-400 font-semibold">
               Submit
             </Button>
