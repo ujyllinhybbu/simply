@@ -20,28 +20,24 @@ export async function POST(request: NextRequest) {
     // get data
     const reqBody = await request.json();
     const { desiredGradeLevel, prompt, base64Image } = reqBody;
-    console.log(base64Image);
 
-    if (!prompt && !base64Image) {
+    if (!desiredGradeLevel)
       return NextResponse.json({
-        message: "missing prompt or base image",
+        message: "must have a grade level selected",
         success: false,
       });
-    }
-
-    if (prompt && base64Image) {
+    if (!prompt)
       return NextResponse.json({
-        message: "either upload image or choose a prompt!",
+        message: "must have a prompt",
         success: false,
       });
-    }
     // Run the Llama model using the run() function
     const response = await run("@cf/meta/llama-3-8b-instruct", {
       messages: [
         {
           role: "system",
           // lol i hate this prompt.... we are going to run out of our free tier
-          content: `Your task is to explain if it is a singular ward or rephrase if it is a sentance/definition: ${"I don't understand what velocity means "} to a ${"Undergraduate"} + grader, keep it short and precise! Make sure not to ask questions in the end. Don't add new line characters or any characters besides alphabet and punctuation or numbers but you can use exclamation marks to sound more enthusiastic towards the earlier grades"}`,
+          content: `Your task is to explain if it is a singular ward or rephrase if it is a sentance/definition: ${prompt} to a ${desiredGradeLevel} + grader, keep it short and precise! Make sure not to ask questions in the end. Don't add new line characters or any characters besides alphabet and punctuation or numbers but be more detailed and go more in depth on grades above 10th grade"}`,
         },
       ],
       // messages: [
@@ -57,13 +53,13 @@ export async function POST(request: NextRequest) {
       // ],
     });
 
-    console.log(response);
+    console.log(response.result.response);
 
     // Return a success response
     return NextResponse.json({
       message: "Successfully simplified task",
       success: true,
-      response,
+      response: response?.result?.response,
     });
   } catch (error: any) {
     console.error("Error in POST handler:", error);

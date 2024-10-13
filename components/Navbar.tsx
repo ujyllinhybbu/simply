@@ -1,5 +1,5 @@
 "use client";
-import { Menu, X } from "lucide-react";
+import { Menu, NotebookPenIcon, X } from "lucide-react";
 import { useState } from "react";
 import { navItems } from "@/constants";
 import Link from "next/link";
@@ -14,16 +14,15 @@ const Navbar = () => {
   };
   return (
     <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b bg-gradient-to-r from-cyan-400 to-fuchsia-400 text-white font-semibold">
-      <div className="container px-4 mx-auto relatve text-sm">
+      <div className="container mx-auto relatve text-sm">
         <div className="flex justify-between items-center">
-          <div className="flex items-center flex-shrink-0">
-            <span className="text-xl font-bold tracking-widest">
-              Simply StepUp
-            </span>
+          <div className="flex items-center flex-shrink-0 gap-x-2">
+            <NotebookPenIcon />
+            <span className="text-xl font-bold tracking-wide">SimplyCard</span>
           </div>
-          <ul className="hidden lg:flex ml-14 space-x-12">
+          <ul className="hidden lg:flex space-x-24">
             {navItems.map((item, index) => (
-              <li key={index} className="hover:underline cursor-pointer">
+              <li key={index} className="hover:underline">
                 <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
