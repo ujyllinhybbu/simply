@@ -17,8 +17,8 @@ const Navbar = () => {
       <div className="container px-4 mx-auto relatve text-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center flex-shrink-0">
-            <span className="text-xl tracking-wide font-bold">
-              SimplyStepup
+            <span className="text-xl font-bold tracking-widest">
+              Simply StepUp
             </span>
           </div>
           <ul className="hidden lg:flex ml-14 space-x-12">
