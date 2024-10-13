@@ -66,10 +66,10 @@ const Page = () => {
         <ul className="pt-4">
           {cards.map((card, index) => (
             <div
-              className="p-5 border border-slate-200 py-2 rounded-lg min-h-[250px] max-w-[500px] mb-4"
+              className="p-8 border border-slate-200 py-2 rounded-lg min-h-[250px] max-w-[500px] mb-4"
               key={index}
             >
-              <div className="w-full flex justify-end cursor-pointer"></div>
+              <div className="w-full flex justify-end cursor-pointer pt-4"></div>
               <h1 className="font-bold">{card.prompt}</h1>
               <div className="py-2"></div>
               <div
@@ -93,7 +93,7 @@ const Page = () => {
                 }
                 onClick={() => handleReveal(index)}
               >
-                <h1>{card.definition}</h1>
+                <h1 className="pb-20">{card.definition}</h1>
               </div>
             </div>
           ))}
